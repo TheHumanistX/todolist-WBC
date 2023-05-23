@@ -8,3 +8,5 @@ export { default as SmallMenu } from './SmallMenu';
 export { default as Lists } from './Lists';
 export { default as Tasks } from './Tasks';
 export { default as TaskDetails } from './TaskDetails';
+export { default as VerticalDots } from './VerticalDots';
+export { default as WalletConnect } from './WalletConnect';

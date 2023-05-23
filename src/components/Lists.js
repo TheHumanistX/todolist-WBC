@@ -1,32 +1,21 @@
 import React from 'react';
-import { Box, Typography, IconButton, Card, CardContent } from '@mui/material';
+import { Box, Typography, Card, CardContent } from '@mui/material';
 import { AddButton, TaskList } from './';
 
-const Lists = () => {
-    const taskLists = [
-        { id: 1, name: 'Errands', tasksCompleted: 3, totalTasks: 8, completed: false },
-        { id: 2, name: 'Yardwork', tasksCompleted: 1, totalTasks: 5, completed: true },
-        { id: 3, name: 'Home Chores', tasksCompleted: 5, totalTasks: 10, completed: false },
-    ];
-
-    console.log(taskLists);
-    console.log(taskLists.length);
-    console.log(taskLists[0]);
-    console.log(taskLists[1]);
-    console.log(taskLists[2]);
-    console.log(taskLists[0].id);
+const Lists = ({ taskLists, onTaskListClick }) => {
+    
 
     const taskListsLength = taskLists.length;
 
     const handleAddList = () => {
         // Handle adding a new task list
-        console.log('Add a new task list');
+        
     };
 
     return (
         <Box
-            width="410px"
-            height="1155px"
+            width="100%"
+            height="100%"
             bgcolor="cardBackgroundColor.main"
             p={2}
             display="flex"
@@ -38,13 +27,13 @@ const Lists = () => {
             </Typography>
 
             {taskLists.map((taskList) => {
-            console.log('After Map taskList: ', taskList)
-               return <TaskList key={taskList.id} taskList={taskList} />
+                console.log('taskList.listId: ', taskList.listId)
+               return <TaskList key={taskList.listId} taskList={taskList} onTaskListClick={onTaskListClick} />
             })}
 
-            <Card variant="plain" onClick={handleAddList} sx={{ backgroundColor: 'cardBackgroundColor.main', mt: 'auto', ml: 'auto' }}>
+            <Card variant="plain" sx={{ backgroundColor: 'cardBackgroundColor.main', mt: 'auto', ml: 'auto' }}>
                 <CardContent>
-                    <AddButton />
+                    <AddButton onClick={handleAddList}/>
                 </CardContent>
             </Card>
         </Box>

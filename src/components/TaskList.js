@@ -1,28 +1,29 @@
-import React from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ProgressBar, SmallMenu } from './';
+import React, { useState } from 'react';
+import { Box, Typography } from '@mui/material';
+import { ProgressBar, SmallMenu, VerticalDots } from './';
 
-const TaskList = ({ taskList }) => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
+const TaskList = ({ taskList, onTaskListClick }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
     console.log('TaskList: ', taskList)
-    const { id, name, tasksCompleted, totalTasks } = taskList;
+    const { listId, listName, tasks } = taskList;
+     // Calculate totalTasks and tasksCompleted based on tasks array
+    const totalTasks = tasks.length;
+    const tasksCompleted = tasks.filter(task => task.completed).length;
     const progress = (tasksCompleted / totalTasks) * 100;
+    console.log('listId: ', listId)
 
-    // Create a function that will set the background color of the Box dependent on wheter the 'id' is even or odd
-        const backgroundColor = () => {
-            if (id % 2 === 0) {
-                console.log('Even', id % 2)
-                return 'cardBackgroundColor.main';
-            } else {
-                return 'cardBackgroundColor.alternate';
-            }
-        };
+    const backgroundColor = () => {
+        if (listId % 2 === 0) {
+            return 'cardBackgroundColor.main';
+        } else {
+            return 'cardBackgroundColor.alternate';
+        }
+    };
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-    
+
     const handleClose = () => { setAnchorEl(null); };
 
     return (
@@ -31,22 +32,30 @@ const TaskList = ({ taskList }) => {
             <Box
                 boxSizing='border-box'
                 border='2px solid'
-                padding='10px'
+                padding='20px'
                 borderColor='cardBackgroundColor.alternate'
-                backgroundColor= {backgroundColor()}
-                height='115px'
-                width='380px'
+                backgroundColor={backgroundColor()}
+                height='auto'
+                width='100%'
                 borderRadius='12px'
+                display='flex'
+                alignItems='center'
+                onClick={() => onTaskListClick(taskList)}
             >
-                <Box display="flex" justifyContent="space-between" height='60%'>
-                    <Typography variant="h6">{name}</Typography>
-                    <IconButton onClick={handleClick}>
-                        <MoreVertIcon style={{ position: "absolute", top: "60%" }} />
-                    </IconButton>
-                </Box>
+                <Box
+                    display='flex'
+                flexDirection='column'
+                flexGrow={1}
+                // gap={1}
+                >
+                <Typography variant="h5" gutterBottom>{listName}</Typography>
                 <Typography variant="body2">{`${tasksCompleted} of ${totalTasks} Tasks Complete`}</Typography>
                 <ProgressBar margin='10px 0 0 0' width='80%' progress={progress} />
             </Box>
+            <VerticalDots listId={listId} onClick={handleClick} 
+            sx={{ ml: 'auto' }} />
+            
+        </Box>
             <SmallMenu anchorEl={anchorEl} handleClose={handleClose} />
         </div>
 

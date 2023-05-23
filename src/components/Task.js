@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Menu, MenuItem } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { SmallMenu } from './';
+import { Box, Typography } from '@mui/material';
+import { SmallMenu, VerticalDots } from './';
 
 const Task = ({ task }) => {
     const [anchorEl, setAnchorEl] = useState(null);
-    const { id, name, completed } = task;
+    const { id, title, completed } = task;
 
     const backgroundColor = () => {
         if (id % 2 === 0) {
-            console.log('Even', id % 2)
             return 'cardBackgroundColor.main';
         } else {
             return 'cardBackgroundColor.alternate';
@@ -39,27 +37,20 @@ const Task = ({ task }) => {
                 border='2px solid'
                 borderColor='cardBackgroundColor.alternate'
             >
-                <Typography 
-                variant="h6"
-                sx={{
-                    textDecoration: completed ? "line-through" : "none",
-                    color: completed ? "textColor.completed" : "textColor.primary",
-                }}
-                >{name}
+                <Typography
+                    variant="h6"
+                    sx={{
+                        textDecoration: completed ? "line-through" : "none",
+                        color: completed ? "textColor.completed" : "textColor.primary",
+                    }}
+                >{title}
                 </Typography>
-                <IconButton onClick={handleClick}>
-                    <MoreVertIcon />
-                </IconButton>
+
+                <VerticalDots id={id} onClick={handleClick} />
+
             </Box>
             <SmallMenu anchorEl={anchorEl} handleClose={handleClose} />
-            <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-            >
-                <MenuItem onClick={handleClose}>Edit</MenuItem>
-                <MenuItem onClick={handleClose}>Delete</MenuItem>
-            </Menu>
+
         </div>
     );
 }

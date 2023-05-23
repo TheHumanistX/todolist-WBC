@@ -8,6 +8,7 @@
     "@fleekhq/fleek-storage-js": "^1.0.24",
     "@mui-treasury/layout": "^5.0.0",
     "@mui/icons-material": "^5.11.16",
+    "@mui/joy": "^5.0.0-alpha.81",
     "@mui/lab": "^5.0.0-alpha.131",
     "@mui/material": "^5.13.1",
     "@mui/system": "^5.13.1",
