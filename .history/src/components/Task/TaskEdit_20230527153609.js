@@ -20,17 +20,10 @@ const TaskEdit = () => {
 
 
     const handleConfirm = () => {
-        console.log('handleConfirm dueDate: ', dueDate)
         if (taskName.trim() === '') {
             alert('Task Title cannot be empty');
             return;
         }
-
-        if (dueDate && new Date(dueDate) < new Date()) {
-            alert('Due Date cannot be in the past');
-            return;
-        }
-
         let formattedDueDate = dueDate;
         if (dueDate) {
             formattedDueDate = format(utcToZonedTime(dueDate, 'UTC'), 'MM/dd/yyyy');
@@ -41,11 +34,7 @@ const TaskEdit = () => {
             dueDate: formattedDueDate,
             description,
         };
-        console.log('formattedDueDate: ', formattedDueDate)
         handleTaskUpdate(selectedTaskList.listId, updatedTask); // Use the provided onConfirm prop
-        setTaskName('');
-        setDueDate(null);
-        setDescription('');
     };
 
     const handleCancel = () => {
@@ -75,16 +64,16 @@ const TaskEdit = () => {
                     ),
                 }}
             />
-            
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            {selectedTask && (
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
                         label="Due Date"
-                        value={new Date(dueDate)}
+                        value={dueDate}
                         onChange={(newValue) => setDueDate(newValue)}
-                        renderInput={(params) => <TextField {...params} fullWidth />}
+                        renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
                     />
-                </LocalizationProvider> 
-            
+                </LocalizationProvider>
+            )}
             <TextareaAutosize
                 minRows={15}
                 value={description}

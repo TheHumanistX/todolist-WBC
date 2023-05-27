@@ -148,10 +148,7 @@ export const TodoProvider = ({ children }) => {
         // Update the local storage with the new taskLists array
         localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
 
-        // Setting editMode to false so that TaskDetails will render TaskView to display updated task after edit
         setEditMode(false);
-
-        // set the selectedTask to the updated task so it is viewed immediately on confirm
         setSelectedTask(updatedTask);
     };
 

@@ -25,10 +25,8 @@ const Tasks = ( ) => {
         setAddTaskMode(true);
     };
 
-   
-
     return (
-        <CardContainer className='tempClass'>
+        <CardContainer>
             <Box 
             width="100%"
             p={2}
@@ -38,6 +36,8 @@ const Tasks = ( ) => {
             justifyContent="center"
             alignItems="center"
             boxSizing="border-box"
+            overflowY="auto"
+            maxHeight="100%
             >
             <Typography variant="h5" mb={2}>
                 {selectedTaskList.listName} Tasks

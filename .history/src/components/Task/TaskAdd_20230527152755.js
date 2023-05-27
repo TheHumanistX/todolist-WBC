@@ -13,9 +13,9 @@ import { Check, Clear, CloseOutlined } from '@mui/icons-material';
 import { TodoContext } from '../../context/TodoContext';
 
 const TaskAdd = () => {
-  const { handleTaskAdd, selectedTaskList, setAddTaskMode, dueDate, setDueDate } = useContext(TodoContext);
+  const { handleTaskAdd, selectedTaskList, setAddTaskMode } = useContext(TodoContext);
   const [taskName, setTaskName] = useState('');
-  // const [dueDate, setDueDate] = useState(null);
+  const [dueDate, setDueDate] = useState(null);
   const [description, setDescription] = useState('');
 
   const [createdDate] = useState(format(utcToZonedTime(new Date(), 'UTC'), 'MM/dd/yyyy'));
@@ -26,12 +26,6 @@ const TaskAdd = () => {
       alert('Task Title cannot be empty');
       return;
     }
-
-    if (dueDate && new Date(dueDate) < new Date()) {
-      alert('Due Date cannot be in the past');
-      return;
-  }
-
     const newTaskId = selectedTaskList.tasks.length + 1;
     let formattedDueDate = dueDate;
     if (dueDate) {

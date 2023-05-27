@@ -25,7 +25,9 @@ const Tasks = ( ) => {
         setAddTaskMode(true);
     };
 
-   
+    let a = document.querySelector(".tempClass");
+
+    console.log('Height: ', getComputedStyle(a).height);
 
     return (
         <CardContainer className='tempClass'>
@@ -38,6 +40,8 @@ const Tasks = ( ) => {
             justifyContent="center"
             alignItems="center"
             boxSizing="border-box"
+            overflowY="auto"
+            maxHeight="100%"
             >
             <Typography variant="h5" mb={2}>
                 {selectedTaskList.listName} Tasks

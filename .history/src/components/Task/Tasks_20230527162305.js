@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Typography, Card, CardContent, Box } from '@mui/material';
+import { Typography, Card, CardContent } from '@mui/material';
 import { Task, AddButton, CardContainer } from '../';
 import { TodoContext } from '../../context/TodoContext';
 
@@ -25,20 +25,9 @@ const Tasks = ( ) => {
         setAddTaskMode(true);
     };
 
-   
-
     return (
-        <CardContainer className='tempClass'>
-            <Box 
-            width="100%"
-            p={2}
-            display="flex"
-            flexDirection="column"
-            borderRadius="22px"
-            justifyContent="center"
-            alignItems="center"
-            boxSizing="border-box"
-            >
+        <CardContainer>
+            <Box>
             <Typography variant="h5" mb={2}>
                 {selectedTaskList.listName} Tasks
             </Typography>

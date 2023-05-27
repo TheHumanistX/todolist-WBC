@@ -184,7 +184,7 @@ function App() {
                     <HeaderBar />
                     <WalletConnect />
                   </Box>
-                  <Box display='flex' gap='3vw' height='100%' style={{ maxHeight: "100%" }}>
+                  <Box display='flex' gap='3vw' height='100%' maxHeight="100%">
                     <Tasks />
                     <TaskDetails />
                   </Box>

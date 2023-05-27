@@ -25,12 +25,6 @@ const TaskEdit = () => {
             alert('Task Title cannot be empty');
             return;
         }
-
-        if (dueDate && new Date(dueDate) < new Date()) {
-            alert('Due Date cannot be in the past');
-            return;
-        }
-
         let formattedDueDate = dueDate;
         if (dueDate) {
             formattedDueDate = format(utcToZonedTime(dueDate, 'UTC'), 'MM/dd/yyyy');

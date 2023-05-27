@@ -38,6 +38,8 @@ const Tasks = ( ) => {
             justifyContent="center"
             alignItems="center"
             boxSizing="border-box"
+            overflowy="auto"
+            maxHeight="100%"
             >
             <Typography variant="h5" mb={2}>
                 {selectedTaskList.listName} Tasks

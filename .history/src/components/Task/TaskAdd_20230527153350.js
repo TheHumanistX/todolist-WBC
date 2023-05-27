@@ -26,12 +26,6 @@ const TaskAdd = () => {
       alert('Task Title cannot be empty');
       return;
     }
-
-    if (dueDate && new Date(dueDate) < new Date()) {
-      alert('Due Date cannot be in the past');
-      return;
-  }
-
     const newTaskId = selectedTaskList.tasks.length + 1;
     let formattedDueDate = dueDate;
     if (dueDate) {

@@ -25,10 +25,8 @@ const Tasks = ( ) => {
         setAddTaskMode(true);
     };
 
-   
-
     return (
-        <CardContainer className='tempClass'>
+        <CardContainer>
             <Box 
             width="100%"
             p={2}
