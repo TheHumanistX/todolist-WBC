@@ -1,0 +1,9 @@
+.connectButton {
+    background-color: #F2F4F8 !important;
+    display:"flex";
+    align-items:"center";
+    width:285px;
+    height:50px;
+    padding:0px 30px;
+    border-radius:25px;
+ } 

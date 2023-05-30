@@ -1,16 +1,15 @@
-import React, { useContext} from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Box, Typography, Card, CardContent } from '@mui/material';
-import { AddButton, TaskList } from './';
+import { AddButton, TaskList, ListAdd, ListEdit } from './';
 import { TodoContext } from '../context/TodoContext';
 
 const Lists = () => {
 
-    const {taskLists, handleTaskListClick} = useContext(TodoContext);
+    const {taskLists, setOpen} = useContext(TodoContext);
     const taskListsLength = taskLists.length;
 
-    const handleAddList = () => {
-        // Handle adding a new task list
-
+    const handleClickOpen = () => {
+        setOpen(true);
     };
 
     return (
@@ -27,7 +26,7 @@ const Lists = () => {
             <Typography variant="h5" mb={2}>
                 Lists ({taskLists.length})
             </Typography>
-
+            {/* {renderTaskLists()} */}
             {taskLists.map((taskList) => {
                 console.log('taskList.listId: ', taskList.listId)
                return <TaskList key={taskList.listId} taskList={taskList} />
@@ -35,9 +34,12 @@ const Lists = () => {
 
             <Card variant="plain" sx={{ backgroundColor: 'cardBackgroundColor.main', mt: 'auto', ml: 'auto' }}>
                 <CardContent>
-                    <AddButton onClick={handleAddList}/>
+                    <AddButton onClick={handleClickOpen}/>
                 </CardContent>
             </Card>
+            <ListAdd />
+            <ListEdit />
+
         </Box>
     );
 };

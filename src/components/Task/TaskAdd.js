@@ -1,25 +1,16 @@
 import React, { useState, useContext } from 'react';
-import {
-  Box,
-  TextField,
-  TextareaAutosize,
-  IconButton
-} from '@mui/material';
+import { Box, TextField, TextareaAutosize, IconButton } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { format } from 'date-fns';
-import { Check, Clear, CloseOutlined } from '@mui/icons-material';
+import { Check, CloseOutlined } from '@mui/icons-material';
 import { TodoContext } from '../../context/TodoContext';
 
 const TaskAdd = () => {
-  const { handleTaskAdd, selectedTaskList, setAddTaskMode, dueDate, setDueDate } = useContext(TodoContext);
-  const [taskName, setTaskName] = useState('');
-  // const [dueDate, setDueDate] = useState(null);
-  const [description, setDescription] = useState('');
+  const { handleTaskAdd, selectedTaskList, setAddTaskMode, dueDate, setDueDate, description, setDescription, taskName, setTaskName } = useContext(TodoContext);
 
   const [createdDate] = useState(format(utcToZonedTime(new Date(), 'UTC'), 'MM/dd/yyyy'));
-  console.log('createdDate: ', createdDate)
 
   const handleConfirm = () => {
     if (taskName.trim() === '') {
@@ -30,14 +21,14 @@ const TaskAdd = () => {
     if (dueDate && new Date(dueDate) < new Date()) {
       alert('Due Date cannot be in the past');
       return;
-  }
+    }
 
     const newTaskId = selectedTaskList.tasks.length + 1;
     let formattedDueDate = dueDate;
     if (dueDate) {
       formattedDueDate = format(utcToZonedTime(dueDate, 'UTC'), 'MM/dd/yyyy');
     }
-  
+
     handleTaskAdd(selectedTaskList.listId, { taskId: newTaskId, taskName, createdDate, dueDate: formattedDueDate, completed: false, description });
     setTaskName('');
     setDueDate(null);
@@ -47,19 +38,22 @@ const TaskAdd = () => {
 
   const handleCancel = () => {
     setAddTaskMode(false);
-    
-};
+
+  };
 
   return (
     <>
-      <TextField
-        label="Task Title"
-        value={taskName}
-        onChange={(e) => setTaskName(e.target.value)}
-        fullWidth
-        autoFocus
-      />
+      <Box padding={5} boxSizing='border-box' width='100%' mb={1}>
+        <TextField
+          label="Task Title"
+          value={taskName}
+          onChange={(e) => setTaskName(e.target.value)}
+          fullWidth
+          autoFocus
+        />
+      </Box>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
+        {console.log('Just before DatePicker in TaskAdd dueDate: ', dueDate)}
         <DatePicker
           label="Due Date"
           value={dueDate}
@@ -68,11 +62,19 @@ const TaskAdd = () => {
         />
       </LocalizationProvider>
       <TextareaAutosize
-        minRows={3}
+        minRows={15}
         placeholder="Task Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        style={{ width: '100%', minHeight: '100px', marginTop: '15px' }}
+        style={{
+          width: '80%',
+          height: '60%',
+          borderRadius: '12px',
+          borderColor: 'backgroundColor.default',
+          resize: 'none',
+          margin: 'auto',
+          padding: '12px',
+        }}
       />
       {console.log('ListId: ', selectedTaskList.listId)}
       <Box display="flex" justifyContent="space-between" mt={2}>

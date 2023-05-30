@@ -1,33 +1,3 @@
-// import React, { createContext, useState } from 'react';
-
-// export const TodoContext = createContext();
-
-// export const TodoProvider = ({ children }) => {
-
-
-
-//     // Set up state variables
-//     const [selectedTaskList, setSelectedTaskList] = useState(null);
-//     const [selectedTask, setSelectedTask] = useState(null);
-//     const [addTaskMode, setAddTaskMode] = useState(false);
-
-
-
-//     return (
-//         <TodoContext.Provider value={{
-//             // Provide state variables and setter functions
-//             selectedTaskList,
-//             setSelectedTaskList,
-//             selectedTask,
-//             setSelectedTask,
-//             addTaskMode,
-//             setAddTaskMode,
-//         }}>
-//             {children}
-//         </TodoContext.Provider>
-//     );
-// };
-
 import React, { createContext, useState } from "react";
 import todoListData from "../data/todoListData";
 
@@ -41,6 +11,10 @@ export const TodoProvider = ({ children }) => {
     const [taskName, setTaskName] = useState("");
     const [dueDate, setDueDate] = useState(null);
     const [description, setDescription] = useState("");
+    const [open, setOpen] = useState(false);
+    const [openTaskListEdit, setOpenTaskListEdit] = useState({ open: false, listId: null });
+
+
 
     // Check if task list data exists in local storage
     const taskListsJSON = localStorage.getItem("taskLists");
@@ -58,6 +32,8 @@ export const TodoProvider = ({ children }) => {
     const [taskLists, setTaskLists] = useState(initialData);
     const [selectedTaskList, setSelectedTaskList] = useState(null);
 
+    
+
     const handleEdit = () => {
         setEditMode(true);
     };
@@ -66,8 +42,49 @@ export const TodoProvider = ({ children }) => {
         setSelectedTaskList(taskList);
     };
 
+
+    const handleListAdd = (newList) => {
+        // Create a new listId for the new list
+        const newListId = taskLists.length + 1;
+
+        // Add new list to the existing lists
+        const updatedTaskLists = [...taskLists, { ...newList, listId: newListId, tasks: [] }];
+
+        // Update the state with the new taskLists array
+        setTaskLists(updatedTaskLists);
+
+        // Update the local storage with the new taskLists array
+        localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
+    };
+
+    const handleEditTaskList = (listId) => {
+        setOpenTaskListEdit({ open: true, listId });
+    };
+
+    const handleCloseTaskListEdit = () => {
+        setOpenTaskListEdit({ open: false, listId: null });
+    };
+
+    const handleListTitleUpdate = (listId, newTitle) => {
+        const updatedTaskLists = taskLists.map((taskList) => {
+            if (taskList.listId === listId) {
+                return { ...taskList, listName: newTitle };
+            }
+            return taskList;
+        });
+
+        setTaskLists(updatedTaskLists);
+        localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
+    };
+
+    const handleListDelete = (listId) => {
+        const updatedTaskLists = taskLists.filter((taskList) => taskList.listId !== listId);
+
+        setTaskLists(updatedTaskLists);
+        localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
+    };
+
     const handleTaskAdd = (listId, newTask) => {
-        // Implement the logic to add a new task to a specific task list
         const taskListToUpdate = taskLists.find(
             (taskList) => taskList.listId === listId
         );
@@ -77,15 +94,26 @@ export const TodoProvider = ({ children }) => {
             return;
         }
 
-        // Construct taskId for the new task
+        const uncompletedTasks = taskListToUpdate.tasks.filter((task) => !task.completed);
+        const completedTasks = taskListToUpdate.tasks.filter((task) => task.completed);
 
-        const updatedTask = {
-            ...newTask
-        };
+        // Add the new task at the end of the uncompleted tasks
+        const updatedUncompletedTasks = [
+            ...uncompletedTasks,
+            { ...newTask, taskId: uncompletedTasks.length + 1 },
+        ];
+
+        // Update the taskIds for the completed tasks
+        const updatedCompletedTasks = completedTasks.map((task, index) => {
+            return { ...task, taskId: updatedUncompletedTasks.length + index + 1 };
+        });
+
+        // Merge the updated uncompleted tasks and completed tasks
+        const updatedTasks = [...updatedUncompletedTasks, ...updatedCompletedTasks];
 
         const updatedTaskList = {
             ...taskListToUpdate,
-            tasks: taskListToUpdate.tasks.concat(updatedTask),
+            tasks: updatedTasks,
         };
 
         const updatedTaskLists = taskLists.map((taskList) =>
@@ -97,19 +125,19 @@ export const TodoProvider = ({ children }) => {
 
         if (selectedTaskList && selectedTaskList.listId === listId) {
             setSelectedTaskList(updatedTaskList);
-        }    
+        }
 
         // Update the local storage with the new taskLists array
         localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
 
         // set the selectedTask to the newly added task so it is viewed immediately on confirm
-        setSelectedTask(updatedTask);
+        setSelectedTask(newTask);
     };
 
     const handleTaskUpdate = (listId, updatedTask) => {
         // Find the task list containing the current task
         const taskListToUpdate = taskLists.find(
-            (taskList) => taskList.listId === selectedTaskList.listId
+            (taskList) => taskList.listId === listId
         );
 
         if (!taskListToUpdate) {
@@ -143,7 +171,7 @@ export const TodoProvider = ({ children }) => {
 
         if (selectedTaskList && selectedTaskList.listId === listId) {
             setSelectedTaskList(updatedTaskList);
-        }  
+        }
 
         // Update the local storage with the new taskLists array
         localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
@@ -155,6 +183,119 @@ export const TodoProvider = ({ children }) => {
         setSelectedTask(updatedTask);
     };
 
+    const handleTaskDelete = (listId, taskId) => {
+        // Find the task list containing the task to be deleted
+        const taskListToUpdate = taskLists.find((taskList) => taskList.listId === listId);
+
+        if (!taskListToUpdate) {
+            console.error("Task list not found for the selected task");
+            return;
+        }
+
+        // Remove the task from the task list
+        const updatedTaskList = {
+            ...taskListToUpdate,
+            tasks: taskListToUpdate.tasks.filter((task) => task.taskId !== taskId),
+        };
+
+        // Adjust the taskIds of the remaining tasks
+        const updatedTasks = updatedTaskList.tasks.map((task, index) => {
+            return { ...task, taskId: index + 1 };
+        });
+
+        // Replace the tasks in updatedTaskList with the updatedTasks
+        updatedTaskList.tasks = updatedTasks;
+
+        const updatedTaskLists = taskLists.map((taskList) =>
+            taskList.listId === listId ? updatedTaskList : taskList
+        );
+
+        // Update the state with the new taskLists array
+        setTaskLists(updatedTaskLists);
+
+        if (selectedTaskList && selectedTaskList.listId === listId) {
+            setSelectedTaskList(updatedTaskList);
+        }
+
+        // Update the local storage with the new taskLists array
+        localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
+        setSelectedTask(null);
+        console.log('setSelectedTask called in deleteTask');
+    };
+
+    const handleTaskToggleCompleted = (listId, taskId) => {
+        const taskListToUpdate = taskLists.find((taskList) => taskList.listId === listId);
+
+        if (!taskListToUpdate) {
+            console.error("Task list not found for the selected task");
+            return;
+        }
+
+        const taskToUpdate = taskListToUpdate.tasks.find((task) => task.taskId === taskId);
+
+        if (!taskToUpdate) {
+            console.error("Task not found in the selected task list");
+            return;
+        }
+
+        const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
+
+        let sortedTasks;
+
+        if (updatedTask.completed) {
+            // If the task is being marked as completed, move it to the end of the list
+            const remainingTasks = taskListToUpdate.tasks
+                .filter((task) => task.taskId !== taskId)
+                .map((task, index) => {
+                    return { ...task, taskId: index + 1 };
+                });
+
+            sortedTasks = [
+                ...remainingTasks,
+                { ...updatedTask, taskId: remainingTasks.length + 1 },
+            ];
+
+        } else {
+            // If the task is being marked as uncompleted, move it to the correct position
+
+            const remainingUncompletedTasks = taskListToUpdate.tasks.filter(
+                (task) => !task.completed && task.taskId !== taskId
+            );
+
+            const remainingCompletedTasks = taskListToUpdate.tasks.filter(
+                (task) => task.completed && task.taskId !== taskId
+            );
+
+            sortedTasks = [
+                ...remainingUncompletedTasks,
+                updatedTask,
+                ...remainingCompletedTasks
+            ].map((task, index) => {
+                return { ...task, taskId: index + 1 };
+            });
+        }
+
+        const updatedTaskList = {
+            ...taskListToUpdate,
+            tasks: sortedTasks
+        };
+
+        const updatedTaskLists = taskLists.map((taskList) =>
+            taskList.listId === listId ? updatedTaskList : taskList
+        );
+
+        setTaskLists(updatedTaskLists);
+
+        if (selectedTaskList && selectedTaskList.listId === listId) {
+            setSelectedTaskList(updatedTaskList);
+        }
+
+        setSelectedTask(updatedTask);
+
+        localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
+    };
+
+    console.log('TodoProvider rendering. Current selectedTask:', selectedTask);
     return (
         <TodoContext.Provider
             value={{
@@ -166,10 +307,21 @@ export const TodoProvider = ({ children }) => {
                 setTaskLists,
                 selectedTaskList,
                 setSelectedTaskList,
+                open,
+                setOpen,
+                openTaskListEdit,
+                setOpenTaskListEdit,
                 handleEdit,
                 handleTaskListClick,
+                handleListAdd,
+                handleEditTaskList,
+                handleCloseTaskListEdit,
+                handleListTitleUpdate,
+                handleListDelete,
                 handleTaskAdd,
                 handleTaskUpdate,
+                handleTaskDelete,
+                handleTaskToggleCompleted,
                 editMode,
                 setEditMode,
                 taskName,

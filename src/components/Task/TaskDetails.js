@@ -1,14 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Typography } from '@mui/material';
-import { format } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
 import { TodoContext } from '../../context/TodoContext';
 import { CardContainer, TaskEdit, TaskView, TaskAdd } from '../';
  
 const TaskDetails = ({ onDelete }) => {
-    const { selectedTask, selectedTaskList, addTaskMode, editMode, setAddTaskMode, handleTaskAdd } = useContext(TodoContext);
-    console.log('selectedTask: ', selectedTask)
-    console.log('selectedTaskList at top of TaskDetails: ', selectedTaskList)
+    const { selectedTask, selectedTaskList, addTaskMode, editMode } = useContext(TodoContext);
 
     if (!selectedTask && !addTaskMode) {
         return (

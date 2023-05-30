@@ -1,7 +1,21 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
 import { Menu, MenuItem } from '@mui/material'
 
-const SmallMenu = ({ anchorEl, handleClose }) => {
+import { TodoContext } from '../context/TodoContext'
+
+const SmallMenu = ({ anchorEl, handleClose, handleEdit, handleDelete }) => {
+    
+    const { setListEdit } = useContext(TodoContext);
+    const handleEditClick = () => {
+        handleEdit();
+        handleClose();
+      };
+
+      const handleDeleteClick = () => {
+        handleDelete();
+        handleClose();
+      };
+
     return (
         <div>
             <Menu
@@ -9,8 +23,8 @@ const SmallMenu = ({ anchorEl, handleClose }) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={handleClose}>Edit</MenuItem>
-                <MenuItem onClick={handleClose}>Delete</MenuItem>
+                <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+                <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
             </Menu>
         </div>
     )

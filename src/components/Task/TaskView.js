@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Typography, Card, IconButton, Divider, TextareaAutosize, Box } from '@mui/material';
 import { EditNote } from '@mui/icons-material';
 import { TodoContext } from '../../context/TodoContext';
@@ -6,6 +6,10 @@ import { TodoContext } from '../../context/TodoContext';
 const TaskView = () => {
 
   const { handleEdit, selectedTask } = useContext(TodoContext);
+
+  useEffect(() => {
+    console.log('TaskView Selected task:', selectedTask);
+  }, [selectedTask]);
   
   return (
     <>
@@ -30,7 +34,7 @@ const TaskView = () => {
         disabled
         style={{
           width: '80%',
-          height: '50%',
+          height: '60%',
           borderRadius: '12px',
           borderColor: 'backgroundColor.default',
           resize: 'none',

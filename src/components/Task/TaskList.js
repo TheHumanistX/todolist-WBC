@@ -1,13 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
-import { ProgressBar, SmallMenu, VerticalDots } from '../';
+import { ProgressBar, SmallMenu, VerticalDots, ListEdit } from '../';
 import { TodoContext } from '../../context/TodoContext';
 
 
 const TaskList = ({ taskList }) => {
-    const { selectedTaskList, setSelectedTaskList, handleTaskListClick } = useContext(TodoContext);
-    
-    const [anchorEl, setAnchorEl] = useState(null);
+    const { selectedTaskList, setSelectedTaskList, handleTaskListClick, setCurrentListTitle, handleEditTaskList, handleListDelete } = useContext(TodoContext);
+
+    const [menuAnchorElement , setMenuAnchorElement ] = useState(null);
     console.log('TaskList: ', taskList)
     const { listId, listName, tasks } = taskList;
     
@@ -27,11 +27,11 @@ const TaskList = ({ taskList }) => {
     
 
     const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+        setMenuAnchorElement (event.currentTarget);
       };
     
       const handleClose = () => {
-        setAnchorEl(null);
+        setMenuAnchorElement (null);
       };
     
 
@@ -56,7 +56,6 @@ const TaskList = ({ taskList }) => {
                     display='flex'
                 flexDirection='column'
                 flexGrow={1}
-                // gap={1}
                 >
                 <Typography variant="h5" gutterBottom>{listName}</Typography>
                 <Typography variant="body2">{`${tasksCompleted} of ${totalTasks} Tasks Complete`}</Typography>
@@ -66,7 +65,8 @@ const TaskList = ({ taskList }) => {
             sx={{ ml: 'auto' }} />
             
         </Box>
-            <SmallMenu anchorEl={anchorEl} handleClose={handleClose} />
+            <SmallMenu anchorEl={menuAnchorElement } handleClose={handleClose} handleEdit={handleEditTaskList.bind(null, listId)} handleDelete={handleListDelete.bind(null, listId)} />
+            <ListEdit />
         </div>
 
 

@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
 import { Typography, Box } from '@mui/material';
 import { format, getMonth } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 import { TodoContext } from '../context/TodoContext';
 
 const HeaderBar = ({ taskList }) => {
     const { selectedTaskList } = useContext(TodoContext);
     const currentMonth = getMonth(new Date());
     // We don't want a period after May because it won't abbreviate may since it is already 3 letters long.
-    const currentDate = currentMonth === 4 ? format(new Date(), 'MMM do, yyyy') : format(new Date(), 'MMM. do, yyyy');
+    const currentDate = currentMonth === 4 ? format(utcToZonedTime(new Date(), 'UTC'), 'MMM do, yyyy') : format(utcToZonedTime(new Date(), 'UTC'), 'MMM. do, yyyy');
     const { listId, listName, tasks } = selectedTaskList || {};
     const tasksCompleted = selectedTaskList ? tasks.filter((task) => task.completed).length : null;
     const totalTasks = selectedTaskList ? tasks.length : null;

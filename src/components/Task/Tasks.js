@@ -5,7 +5,7 @@ import { TodoContext } from '../../context/TodoContext';
 
 const Tasks = ( ) => {
     const { selectedTaskList, setAddTaskMode } = useContext(TodoContext);
- 
+    
     if (!selectedTaskList) {
         return (
             <CardContainer>
@@ -25,26 +25,25 @@ const Tasks = ( ) => {
         setAddTaskMode(true);
     };
 
-   
-
     return (
-        <CardContainer className='tempClass'>
-            <Box 
-            width="100%"
-            p={2}
-            display="flex"
-            flexDirection="column"
-            borderRadius="22px"
-            justifyContent="center"
-            alignItems="center"
-            boxSizing="border-box"
-            >
+        <CardContainer>
+            
             <Typography variant="h5" mb={2}>
                 {selectedTaskList.listName} Tasks
             </Typography>
             <Typography variant="h6" mb={2}>
                 Outstanding ({tasksOutstanding.length}):
             </Typography>
+            <Box 
+            width="100%"
+            p={2}
+            display="flex"
+            flexDirection="column"
+            borderRadius="22px"
+            justifyContent="stretch"
+            alignItems="center"
+            boxSizing="border-box"
+            >
             {selectedTaskList && selectedTaskList.tasks.map((task) => (
                 <Task key={task.taskId} task={task} />
             ))}

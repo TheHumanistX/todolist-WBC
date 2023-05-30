@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import { TextField, TextareaAutosize, IconButton, InputAdornment, Typography, Divider, Box } from '@mui/material';
+import { TextField, TextareaAutosize, IconButton, Typography, Divider, Box } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { Check, Clear, CloseOutlined } from '@mui/icons-material';
+import { Check, CloseOutlined } from '@mui/icons-material';
 import { TodoContext } from '../../context/TodoContext';
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
@@ -50,32 +50,27 @@ const TaskEdit = () => {
 
     const handleCancel = () => {
         setEditMode(false);
-
+        setTaskName('');
+        setDueDate(null);
+        setDescription('');
     };
 
     return (
         <>
-            <Typography variant="subtitle1" mb={1}>
+            <Typography variant="h6" mb={1}>
                 Created: {selectedTask.createdDate}
             </Typography>
+            
             <Divider variant="middle" />
+            <Box padding={5} boxSizing='border-box' width='100%' textAlign='center' mb={1}>
             <TextField
                 label="Task Title"
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
                 fullWidth
                 margin="normal"
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton onClick={handleCancel} size="small">
-                                <Clear />
-                            </IconButton>
-                        </InputAdornment>
-                    ),
-                }}
             />
-            
+            </Box>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
                         label="Due Date"
@@ -90,8 +85,8 @@ const TaskEdit = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 style={{
-                    width: '600px',
-                    height: '685px',
+                    width: '80%',
+                    height: '60%',
                     borderRadius: '12px',
                     borderColor: 'backgroundColor.default',
                     resize: 'none',
