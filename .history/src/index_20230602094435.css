@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+
+}
+
+.connectButton {
+    width:285px !important;
+    height:50px !important;
+    padding:10px 50px !important;
+    border-radius:25px !important;
+    color: #000 !important;
+    font-size: 1.5rem !important;
+    font-family: "Nunito", sans-serif !important;
+ } 
+
+ .connectButton.light {
+  background-color: #F2F4F8 !important;
+ }
+
+ .connectButton.dark {
+  background-color: #39434B !important;
+ }

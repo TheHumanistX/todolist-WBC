@@ -1,0 +1,30 @@
+Need to update/change:
+
+theme.js:
+* Added `mode` at very top of palette to allow us to set mode (dark or light)
+  * Also pass this in the `const theme = (mode) => createTheme(getDesignTokens(mode));` at the bottom of the theme component
+* Needed to update color palette to work with new dark color scheme... 
+  * added `primary.main` because that is what input field outlines use to determine their colors when focused.
+  * `background.default` same color plus added dark color scheme
+  * `textColor` same colors plus added dark color scheme
+  * `buttonColor` same color plus added dark color scheme
+  * `cardBackgroundColor` 
+    * `.main`same color plus added dark color scheme
+    * `.alternate1` changed from `.alternate` and added dark color scheme
+    * `.alternate2` added to handle second task/task list card color in Lists and Tasks components in dark mode.  Has same light mode color as `.main` because in original code `.main` handled one of the card colors for task and task list card colors.
+    * Basically, `.main` handles the background color of Lists and Tasks components
+    * `.alternate1` and `.alternate2` handle the background colors of the TaskList and Task components
+  * `.cardBorderColor` added to handle borders of the cards.  In original, the white TaskList and Task component cards had the border color to differentiate them from the background of the Lists and Tasks components because they had the same background color. We still need that for light mode and then in dark mode those cards borders are the same color as their background color so we don't see the borders.
+  * `.progressBar` added to handle progress bar. In light/original mode we had used cardBackgroundColor and backgroundColor for the progress bar as well but in dark mode we have the new `#EFC9A4`, so we needed to set up a palette for the progress bar to make this work.
+  * `.hrTextArea` added to handle the divider (I thought we needed color for those but we don't....) and the border color around the teat areas.
+
+Toggle:
+
+* Added inside Lists.js and sits nicely in the bottom left corner of the page
+
+App.JS
+
+* ThemeProvider: 
+  * Already existed in original (wrapping most of the App.js) but now passing `theme={theme(mode)}` because we added the `mode` to the theme itself as well to differentiate between dark and light.
+* In `<Box...>` underneath ThemeProvider, changed to `bgcolor={theme(mode).palette.backgroundColor.default}`
+* Pass `toggleColorMode={toggleColorMode}` to Lists for the light/dark toggle

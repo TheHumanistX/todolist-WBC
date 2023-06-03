@@ -1,10 +1,13 @@
-import React, { createContext, useState } from "react";
+// Importing required modules and data
+import React, { createContext, useState, useEffect } from "react";
 import todoListData from "../data/todoListData";
 
+// Creating Context for our Todo App
 export const TodoContext = createContext();
 
+// Defining TodoProvider which will provide state and handle events to child components
 export const TodoProvider = ({ children }) => {
-    // Set up state variables
+    // State variables
     const [selectedTask, setSelectedTask] = useState(null);
     const [addTaskMode, setAddTaskMode] = useState(false);
     const [editMode, setEditMode] = useState(false);
@@ -14,30 +17,28 @@ export const TodoProvider = ({ children }) => {
     const [open, setOpen] = useState(false);
     const [openTaskListEdit, setOpenTaskListEdit] = useState({ open: false, listId: null });
 
+    // Initial load of task lists data
+    const [taskLists, setTaskLists] = useState(() => {
+        // Fetches task list data from local storage
+        const taskListsJSON = localStorage.getItem("taskLists");
+        
+        // Returns parsed data from local storage or default data if local storage is null
+        return taskListsJSON !== null ? JSON.parse(taskListsJSON) : todoListData;
+    });
 
+    // Save to local storage whenever taskLists updates
+    useEffect(() => {
+        localStorage.setItem("taskLists", JSON.stringify(taskLists));
+    }, [taskLists]);
 
-    // Check if task list data exists in local storage
-    const taskListsJSON = localStorage.getItem("taskLists");
-    // If there's no data in Local Storage, store the initial data
-    if (taskListsJSON === null) {
-        // Store the initial task lists in Local Storage
-        localStorage.setItem("taskLists", JSON.stringify(todoListData));
-    }
-
-    // Parse the data from local storage or use the initial task lists
-    const initialData =
-        taskListsJSON !== null ? JSON.parse(taskListsJSON) : todoListData;
-
-    // Set up state with the initial data
-    const [taskLists, setTaskLists] = useState(initialData);
     const [selectedTaskList, setSelectedTaskList] = useState(null);
 
-    
-
+    // Helper function to handle state transition for editing task
     const handleEdit = () => {
         setEditMode(true);
     };
 
+    // Helper function to handle task list selection
     const handleTaskListClick = (taskList) => {
         setSelectedTaskList(taskList);
     };
@@ -57,15 +58,21 @@ export const TodoProvider = ({ children }) => {
         localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
     };
 
+    // This function takes in a listId and opens the task list edit dialog with that id
     const handleEditTaskList = (listId) => {
+        // Set the openTaskListEdit state to open the dialog with the given listId
         setOpenTaskListEdit({ open: true, listId });
     };
 
+    // This function closes the task list edit dialog
     const handleCloseTaskListEdit = () => {
+        // Set the openTaskListEdit state to close the dialog and reset the listId
         setOpenTaskListEdit({ open: false, listId: null });
     };
 
+    // This function takes in a listId and a newTitle and updates the title of the task list with that id
     const handleListTitleUpdate = (listId, newTitle) => {
+        // Map over the taskLists array and update the listName property of the task list with the given listId
         const updatedTaskLists = taskLists.map((taskList) => {
             if (taskList.listId === listId) {
                 return { ...taskList, listName: newTitle };
@@ -73,18 +80,28 @@ export const TodoProvider = ({ children }) => {
             return taskList;
         });
 
+        // Update the state with the new taskLists array
         setTaskLists(updatedTaskLists);
+
+        // Update the local storage with the new taskLists array
         localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
     };
-
+    // This function takes in a listId and deletes the task list with that id from the taskLists state array
     const handleListDelete = (listId) => {
+        // Filter out the task list with the given listId from the taskLists array
         const updatedTaskLists = taskLists.filter((taskList) => taskList.listId !== listId);
 
+        // Update the state with the new taskLists array
         setTaskLists(updatedTaskLists);
+
+        // Update the local storage with the new taskLists array
         localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
     };
 
-    const handleTaskAdd = (listId, newTask) => {
+    // Task functions helper functions
+    const taskListUpdate = (listId) => {
+
+        // Find the task list containing the current task
         const taskListToUpdate = taskLists.find(
             (taskList) => taskList.listId === listId
         );
@@ -93,6 +110,14 @@ export const TodoProvider = ({ children }) => {
             console.error("Task list not found for the selected task");
             return;
         }
+
+        return taskListToUpdate;
+    }
+
+
+    const handleTaskAdd = (listId, newTask) => {
+
+        const taskListToUpdate = taskListUpdate(listId);
 
         const uncompletedTasks = taskListToUpdate.tasks.filter((task) => !task.completed);
         const completedTasks = taskListToUpdate.tasks.filter((task) => task.completed);
@@ -135,15 +160,8 @@ export const TodoProvider = ({ children }) => {
     };
 
     const handleTaskUpdate = (listId, updatedTask) => {
-        // Find the task list containing the current task
-        const taskListToUpdate = taskLists.find(
-            (taskList) => taskList.listId === listId
-        );
 
-        if (!taskListToUpdate) {
-            console.error("Task list not found for the selected task");
-            return;
-        }
+        const taskListToUpdate = taskListUpdate(listId);
 
         // Find the index of the task to be updated within its list
         const taskIndex = taskListToUpdate.tasks.findIndex(
@@ -184,13 +202,8 @@ export const TodoProvider = ({ children }) => {
     };
 
     const handleTaskDelete = (listId, taskId) => {
-        // Find the task list containing the task to be deleted
-        const taskListToUpdate = taskLists.find((taskList) => taskList.listId === listId);
 
-        if (!taskListToUpdate) {
-            console.error("Task list not found for the selected task");
-            return;
-        }
+        const taskListToUpdate = taskListUpdate(listId);
 
         // Remove the task from the task list
         const updatedTaskList = {
@@ -220,30 +233,30 @@ export const TodoProvider = ({ children }) => {
         // Update the local storage with the new taskLists array
         localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
         setSelectedTask(null);
-        console.log('setSelectedTask called in deleteTask');
     };
 
+    // This function toggles the completed status of a task in a task list
     const handleTaskToggleCompleted = (listId, taskId) => {
-        const taskListToUpdate = taskLists.find((taskList) => taskList.listId === listId);
 
-        if (!taskListToUpdate) {
-            console.error("Task list not found for the selected task");
-            return;
-        }
+        // Get the task list to update
+        const taskListToUpdate = taskListUpdate(listId);
 
+        // Find the task to update
         const taskToUpdate = taskListToUpdate.tasks.find((task) => task.taskId === taskId);
 
+        // If the task is not found, log an error and return
         if (!taskToUpdate) {
             console.error("Task not found in the selected task list");
             return;
         }
 
+        // Create a copy of the task with the completed status toggled
         const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
 
         let sortedTasks;
 
+        // If the task is being marked as completed, move it to the end of the list
         if (updatedTask.completed) {
-            // If the task is being marked as completed, move it to the end of the list
             const remainingTasks = taskListToUpdate.tasks
                 .filter((task) => task.taskId !== taskId)
                 .map((task, index) => {
@@ -258,14 +271,17 @@ export const TodoProvider = ({ children }) => {
         } else {
             // If the task is being marked as uncompleted, move it to the correct position
 
+            // Get the remaining uncompleted tasks
             const remainingUncompletedTasks = taskListToUpdate.tasks.filter(
                 (task) => !task.completed && task.taskId !== taskId
             );
 
+            // Get the remaining completed tasks
             const remainingCompletedTasks = taskListToUpdate.tasks.filter(
                 (task) => task.completed && task.taskId !== taskId
             );
 
+            // Combine the remaining uncompleted tasks, the updated task, and the remaining completed tasks
             sortedTasks = [
                 ...remainingUncompletedTasks,
                 updatedTask,
@@ -275,23 +291,29 @@ export const TodoProvider = ({ children }) => {
             });
         }
 
+        // Create a copy of the task list with the updated task
         const updatedTaskList = {
             ...taskListToUpdate,
             tasks: sortedTasks
         };
 
+        // Create a copy of the task lists array with the updated task list
         const updatedTaskLists = taskLists.map((taskList) =>
             taskList.listId === listId ? updatedTaskList : taskList
         );
 
+        // Update the state with the new task lists array
         setTaskLists(updatedTaskLists);
 
+        // If the selected task list is the one being updated, update the selected task list state
         if (selectedTaskList && selectedTaskList.listId === listId) {
             setSelectedTaskList(updatedTaskList);
         }
 
+        // Update the selected task state with the updated task
         setSelectedTask(updatedTask);
 
+        // Update the local storage with the new task lists array
         localStorage.setItem("taskLists", JSON.stringify(updatedTaskLists));
     };
 
